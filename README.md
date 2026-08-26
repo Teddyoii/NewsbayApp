@@ -1,4 +1,4 @@
-# Flutter Posts App - Pull Request Template
+# Flutter Posts App - NewsBay
 
 ## 🚀 Description
 - Implemented login against the DummyJSON API (`POST /auth/login`) with a persisted session (Hive) that survives app restarts
@@ -11,7 +11,7 @@
 ---
 
 ## 🏗️ Architecture & Solution Rationale
-- **Bloc over Provider**: both stateful flows here — auth (session-check → login → authenticated) and posts (idle → loading → success/empty/failure, plus a distinct loading-more state for pagination) — are naturally finite-state machines. Bloc's `Emitter`/event stream makes each transition explicit, and `bloc_test` gives cheap, readable state-transition tests, which mattered given 25 of the 100 points are for testing. Provider's `ChangeNotifier` would work too, but imperative `notifyListeners()` calls tend to blur "what triggered this state" in a way Bloc's `on<Event>` mapping keeps explicit.
+- **Bloc over Provider**: both stateful flows here — auth (session-check → login → authenticated) and posts (idle → loading → success/empty/failure, plus a distinct loading-more state for pagination) — are naturally finite-state machines. Bloc's `Emitter`/event stream makes each transition explicit, and `bloc_test` gives cheap, readable state-transition tests. Provider's `ChangeNotifier` would work too, but imperative `notifyListeners()` calls tend to blur "what triggered this state" in a way Bloc's `on<Event>` mapping keeps explicit.
 - **Repository layer**: `domain/repositories/` defines interfaces (`AuthRepository`, `PostsRepository`) returning `Either<Failure, T>`. `data/repositories/` implements them, wrapping `data/datasources/` (remote: Dio-backed, via a single `ApiClient`; local: Hive, for auth only). Data sources throw typed `Exception`s; repositories catch and translate them into `Failure`s — nothing raw ever reaches presentation.
 - **Tradeoffs given the one-day timebox**: no `get_it`/`injectable` (a small explicit composition root in `core/di/injector.dart` instead — fewer moving parts to explain, and trivial to swap mocks into for tests); no native Android/iOS flavor splitting (the PDF explicitly allows skipping this, `--dart-define` + three `main_*.dart` entry points instead); Register is a "coming soon" dialog per the spec's own allowance; Top Rate/News/Chat bottom-nav tabs are visible (matching the Figma bottom nav) but render as labelled placeholders since they're out of scope.
 
@@ -79,8 +79,26 @@
 
 ---
 
+## 📱 Screenshots
+
+<img width="108" height="240" alt="Search Feature" src="https://github.com/user-attachments/assets/05f45bb5-3665-4790-8832-94c2634cf7a1" />
+<img width="108" height="240" alt="Profile" src="https://github.com/user-attachments/assets/a0aecbde-f213-43cf-ab82-acbac32fca8b" />
+<img width="108" height="240" alt="Logout" src="https://github.com/user-attachments/assets/9546e8c2-d47c-4c29-92ef-f8a61af84fcd" />
+<img width="108" height="240" alt="Login" src="https://github.com/user-attachments/assets/dd5eb1a4-0048-4c6b-ae5f-ee1ed924f4a5" />
+<img width="108" height="240" alt="Detailed Page" src="https://github.com/user-attachments/assets/50dd3d9b-9994-4f29-95a4-94b7605131c7" />
+<img width="108" height="240" alt="Dashboard" src="https://github.com/user-attachments/assets/3a0e155d-c31c-4017-afec-0c2df0ea86db" />
+
+
+---
+- Test Result
+<img width="881" height="722" alt="Testing Screenshot" src="https://github.com/user-attachments/assets/333ff242-943d-48b1-9111-8a9b4cbebe9d" />
+
+
+---
+
 ## 🎥 Demo Video
-_Link to your Loom/screen recording here — walk through: login → dashboard search → scroll pagination → pull-to-refresh → featured post tap → recent post tap → post detail → profile → logout → relaunch (confirms persisted session)._
+
+- https://drive.google.com/drive/folders/1fyTDP3npj5CS_x-816m9Dyi6Pc5s_oAe?usp=sharing
 
 ---
 
